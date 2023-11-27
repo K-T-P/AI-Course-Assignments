@@ -70,16 +70,15 @@ class Expectimax:
         # Hint: You may need to use the np.inf constant to represent infinity.
         # Hint: You may need to use the max function to get the maximum value in a list.
         v= -1*np.inf
-        board_copy=np.copy(board)
         bestMove=None
-        for func in gf.get_moves():
-            score=func(np.copy(board_copy))[2]
-            if score>v:
+        for func in gf.get_all_possible_moves():
+            newBoard,temp,score1=func(np.copy(board))
+            newBoardScore=evaluation.evaluate_state(newBoard)
+            score2=self.expectimax(newBoard,depth,0)
+            if score1+score2>v:
                 bestMove=func
-                v=score
-        func(board)
-        gf.add_new_tile(board)
-        return func,v
+                v=(score1+score2+newBoardScore)
+        return bestMove,v
         
         #raise NotImplementedError("Maximizer node not implemented yet.")
 
