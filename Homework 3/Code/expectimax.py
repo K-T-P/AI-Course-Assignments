@@ -41,12 +41,16 @@ class Expectimax:
         :return: Returns the best move and score we can obtain by taking it, for the given board state and turn.
         """
         
+        
         # TODO: Complete expectimax function to return the best move and score for the given board state and turn.
         # Hint: You may need to implement minimizer_node and maximizer_node functions.
         # Hint: You may need to use the evaluation.evaluate_state function to score leaf nodes.
         # Hint: You may need to use the gf.terminal_state function to check if the game is over.
+        if turn:
+            return self.maximizer_node(board,depth)
+        else:
+            return self.chance_node(board,depth)
         
-        raise NotImplementedError("Expectimax not implemented yet.")
 
     def maximizer_node(self, board: np.ndarray, depth: int):
         """
@@ -77,7 +81,7 @@ class Expectimax:
         gf.add_new_tile(board)
         return func,v
         
-        raise NotImplementedError("Maximizer node not implemented yet.")
+        #raise NotImplementedError("Maximizer node not implemented yet.")
 
     def chance_node(self, board: np.ndarray, depth: int):
         """
@@ -95,5 +99,16 @@ class Expectimax:
         # Hint: You may need to use the gf.add_new_tile function to add a new tile to the board.
         # Hint: You may need to use the np.copy function to create a copy of the board.
         
-        raise NotImplementedError("Chance node not implemented yet.")
+        score=0.0
+        emptyCells=gf.get_empty_cells(board)
+        size=len(emptyCells)
+        for i,j in emptyCells:
+            board_copy=np.copy(board)
+            board_copy[i,j]=2.0
+            score+=(0.9*self.expectimax(board_copy)/size)
+            board_copy=np.copy(board)
+            board_copy[i,j]=4.0
+            score+=(0.1*self.expectimax(board_copy)/size)
+        
+        return score,None
         
