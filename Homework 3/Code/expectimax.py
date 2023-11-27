@@ -65,6 +65,17 @@ class Expectimax:
         # Hint: You may need to use the np.copy function to create a copy of the board.
         # Hint: You may need to use the np.inf constant to represent infinity.
         # Hint: You may need to use the max function to get the maximum value in a list.
+        v= -1*np.inf
+        board_copy=np.copy(board)
+        bestMove=None
+        for func in gf.get_moves():
+            score=func(np.copy(board_copy))[2]
+            if score>v:
+                bestMove=func
+                v=score
+        func(board)
+        gf.add_new_tile(board)
+        return func,v
         
         raise NotImplementedError("Maximizer node not implemented yet.")
 
