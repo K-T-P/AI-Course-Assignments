@@ -14,7 +14,7 @@ def consistency(board : np.ndarray):
     """
     score=0.0
     shape=np.shape(board)[0]
-    maxNum=max(board)
+    maxNum=max(np.copy(board).flatten())
     for i in range(4):
         if board[0,0]==maxNum:
             score+=20

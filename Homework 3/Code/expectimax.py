@@ -20,8 +20,7 @@ class Expectimax:
         """
         # TODO: Complete get_depth function to return the depth to which the agent should search for the given move number.
         # Hint: You may need to use the DEPTH_BASE_PARAM constant.
-        
-        raise NotImplementedError("Get depth not implemented yet.")
+        return self.DEPTH_BASE_PARAM
 
     def ai_move(self, board, move_number):
         depth = self.get_depth(move_number)
@@ -46,8 +45,14 @@ class Expectimax:
         # Hint: You may need to implement minimizer_node and maximizer_node functions.
         # Hint: You may need to use the evaluation.evaluate_state function to score leaf nodes.
         # Hint: You may need to use the gf.terminal_state function to check if the game is over.
+        if gf.terminal_state(board):
+            return evaluation.evaluate_state(board),None
+        if depth>self.SCALER_PARAM:
+            return -1*np.inf,None
+        depth+=1
         if turn:
-            return self.maximizer_node(board,depth)
+            bestMove,bestScore=self.maximizer_node(board,depth)
+            return bestScore,bestMove
         else:
             return self.chance_node(board,depth)
         
@@ -69,16 +74,19 @@ class Expectimax:
         # Hint: You may need to use the np.copy function to create a copy of the board.
         # Hint: You may need to use the np.inf constant to represent infinity.
         # Hint: You may need to use the max function to get the maximum value in a list.
-        v= -1*np.inf
+        
+        bestScore= -1*np.inf
         bestMove=None
-        for func in gf.get_all_possible_moves():
-            newBoard,temp,score1=func(np.copy(board))
+        
+        for func in gf.get_all_possible_moves(board):
+            newBoard,temp,score1=gf.get_moves()[func[1]](np.copy(board))
             newBoardScore=evaluation.evaluate_state(newBoard)
             score2=self.expectimax(newBoard,depth,0)
-            if score1+score2>v:
+            if score1+score2[0]>bestScore:
                 bestMove=func
-                v=(score1+score2+newBoardScore)
-        return bestMove,v
+                bestScore=(score1+score2+newBoardScore)
+        
+        return bestMove,bestScore
         
         #raise NotImplementedError("Maximizer node not implemented yet.")
 
@@ -101,13 +109,15 @@ class Expectimax:
         score=0.0
         emptyCells=gf.get_empty_cells(board)
         size=len(emptyCells)
-        for i,j in emptyCells:
+        for t in emptyCells:
+            i=t[0]
+            j=t[1]
             board_copy=np.copy(board)
             board_copy[i,j]=2.0
-            score+=(0.9*self.expectimax(board_copy)/size)
+            score+=(0.9*self.expectimax(board_copy,depth,1)[0]/size)
             board_copy=np.copy(board)
             board_copy[i,j]=4.0
-            score+=(0.1*self.expectimax(board_copy)/size)
+            score+=(0.1*self.expectimax(board_copy,depth,1)[0]/size)
         
         return score,None
         
