@@ -7,7 +7,7 @@ import game_functions as gf
 class Expectimax:
     def __init__(self, board):
         self.DEPTH_BASE_PARAM = 1 # You may change this parameter to scale the depth to which the agent searches.
-        self.SCALER_PARAM = 4 # You may change this parameter to scale depth to which the agent searches.
+        self.SCALER_PARAM = 400 # You may change this parameter to scale depth to which the agent searches.
         self.board = board
 
     def get_depth(self, move_number):
@@ -49,7 +49,7 @@ class Expectimax:
         # Hint: You may need to use the gf.terminal_state function to check if the game is over.
         if gf.terminal_state(board):
             return evaluation.evaluate_state(board),None
-        if depth>self.SCALER_PARAM:
+        if depth==self.SCALER_PARAM:
             return evaluation.evaluate_state(board),None
         depth+=1
         if turn:
@@ -109,18 +109,20 @@ class Expectimax:
         # Hint: You may need to use the np.copy function to create a copy of the board.
         
         score=0.0
-        emptyCells=gf.get_empty_cells(board)
-        size=len(emptyCells)
-        for t in emptyCells:
-            print(t)
-            i=t[0]
-            j=t[1]
-            board_copy=np.copy(board)
-            board_copy[i,j]=2.0
-            score+=(0.9*self.expectimax(board_copy,depth,1)[0]/size)
-            board_copy=np.copy(board)
-            board_copy[i,j]=4.0
-            score+=(0.1*self.expectimax(board_copy,depth,1)[0]/size)
         
-        return score
+        num=0
+        board_copy=np.copy(board)
+        size=np.shape(board)[0]
+        for i in range(size):
+            for j in range(size):
+                if not board[i,j]:
+                    num+=1
+                    board_copy[i,j]=2.0
+                    score+=(0.9*self.expectimax(board_copy,depth,1)[0])
+                    board_copy[i,j]=0.0
+                    board_copy[i,j]=4.0
+                    score+=(0.1*self.expectimax(board_copy,depth,1)[0])
+                    board_copy[i,j]=0.0
+        
+        return score/size
         
