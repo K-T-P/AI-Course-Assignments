@@ -4,7 +4,7 @@ import math
 import game_functions as gf
 
 
-def consistency(board : np.ndarray):
+def neighborhoob(board : np.ndarray):
     """
     Returns score of consistency.
     Args:
@@ -13,21 +13,21 @@ def consistency(board : np.ndarray):
         a float
     """
     score=0.0
-    shape=np.shape(board)[0]
-   # maxNum=max(np.copy(board).flatten())
-    for i in range(4):
-    #    if board[0,0]==maxNum:
-     #       score+=maxNum
-        for j in range(shape-1):
-            if board[0,j]>=board[0,j+1] and board[0,j+1]!=0.0:
-                score+=2
-            if board[j,0]>=board[j+1,0] and board[j+1,0]!=0.0:
-                score+=2
-        np.rot90(board)
+    for i in range(3):
+        for j in range(3):
+            if board[i,j]==board[i,j+1]:
+                score+=2*board[i,j]
+            if board[i,j]==board[i+1,j]:
+                score+=2*board[i,j]
+    for i in range(3):
+        if board[3,i]==board[3,i+1]:
+            score+=2*board[3,i]
+        if board[i,3]==board[i+1,3]:
+            score+=2*board[i,3]
     return score
 
 
-def neighborhood(board:np.ndarray):
+def consistency(board:np.ndarray):
     """
     Return score of neighborhood
     Args:
@@ -35,15 +35,17 @@ def neighborhood(board:np.ndarray):
     Return:
         a float
     """    
-    score=0.0
-    shape=np.shape(board)
-    for i in range(shape[0]-1):
-        for j in range(shape[0]-1):
-            if board[i,j]==board[i+1,j]:
-                score+=(2*board[i,j])
-            if board[i,j]==board[i,j+1]:
-                score+=(2*board[i,j])
-    return score
+    score1=0.0
+    score2=0.0
+    score3=0.0
+    score4=0.0
+    for i in range(4):
+        for j in range(4):
+            score1+=(3-i)*(3-j)*board[i,j]
+            score2+=(i)*(3-j)*board[i,j]
+            score3+=(3-i)*(j)*board[i,j]
+            score4+=(i)*(j)*board[i,j]
+    return max(score1,score2,score3,score4)
 
 def evaluate_state(board: np.ndarray) -> float:
     """
@@ -55,4 +57,4 @@ def evaluate_state(board: np.ndarray) -> float:
     # Hint: You may need to use the np.nonzero function to find the indices of non-zero elements.
     # Hint: You may need to use the gf.within_bounds function to check if a position is within the bounds of the board.
 
-    return neighborhood(board)
+    return 0.99*consistency(board)+0.01*neighborhoob(board)
