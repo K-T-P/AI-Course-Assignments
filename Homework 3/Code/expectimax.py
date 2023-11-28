@@ -7,7 +7,7 @@ import game_functions as gf
 class Expectimax:
     def __init__(self, board):
         self.DEPTH_BASE_PARAM = 1 # You may change this parameter to scale the depth to which the agent searches.
-        self.SCALER_PARAM = 400 # You may change this parameter to scale depth to which the agent searches.
+        self.SCALER_PARAM = 4 # You may change this parameter to scale depth to which the agent searches.
         self.board = board
 
     def get_depth(self, move_number):
@@ -38,6 +38,8 @@ class Expectimax:
         :param depth: Depth to which agent takes actions for each move
         :param turn: The turn of the agent. 1 for AI, 0 for computer.
         :return: Returns the best move and score we can obtain by taking it, for the given board state and turn.
+
+        Return : score as float and action
         """
         
         
@@ -48,13 +50,13 @@ class Expectimax:
         if gf.terminal_state(board):
             return evaluation.evaluate_state(board),None
         if depth>self.SCALER_PARAM:
-            return -1*np.inf,None
+            return evaluation.evaluate_state(board),None
         depth+=1
         if turn:
             bestMove,bestScore=self.maximizer_node(board,depth)
             return bestScore,bestMove
         else:
-            return self.chance_node(board,depth)
+            return self.chance_node(board,depth),None
         
 
     def maximizer_node(self, board: np.ndarray, depth: int):
@@ -83,8 +85,8 @@ class Expectimax:
             newBoardScore=evaluation.evaluate_state(newBoard)
             score2=self.expectimax(newBoard,depth,0)
             if score1+score2[0]>bestScore:
-                bestMove=func
-                bestScore=(score1+score2+newBoardScore)
+                bestMove=gf.get_moves()[func[1]]
+                bestScore=(score1+score2[0]+newBoardScore)
         
         return bestMove,bestScore
         
@@ -110,6 +112,7 @@ class Expectimax:
         emptyCells=gf.get_empty_cells(board)
         size=len(emptyCells)
         for t in emptyCells:
+            print(t)
             i=t[0]
             j=t[1]
             board_copy=np.copy(board)
@@ -119,5 +122,5 @@ class Expectimax:
             board_copy[i,j]=4.0
             score+=(0.1*self.expectimax(board_copy,depth,1)[0]/size)
         
-        return score,None
+        return score
         

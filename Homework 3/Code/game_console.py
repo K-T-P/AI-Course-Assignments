@@ -58,7 +58,7 @@ def ai_plot(agent_name='expectimax'):
 # If you want to run this file, comment out the following line.
 
 # 1. playing game once
-# board = gf.initialize_game()
+board = gf.initialize_game()
 # ai_play(board, agent_name='mcts')
 
 # 2. plotting
