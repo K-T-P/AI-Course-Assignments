@@ -7,7 +7,7 @@ import game_functions as gf
 class Expectimax:
     def __init__(self, board):
         self.DEPTH_BASE_PARAM = 1 # You may change this parameter to scale the depth to which the agent searches.
-        self.SCALER_PARAM = 4 # You may change this parameter to scale depth to which the agent searches.
+        self.SCALER_PARAM = 400 # You may change this parameter to scale depth to which the agent searches.
         self.board = board
 
     def get_depth(self, move_number):
