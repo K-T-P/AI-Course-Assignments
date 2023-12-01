@@ -56,7 +56,8 @@ class Expectimax:
             bestMove,bestScore=self.maximizer_node(board,depth)
             return bestScore,bestMove
         else:
-            return self.chance_node(board,depth),None
+            coefficient=(16-np.count_nonzero(board))/4
+            return coefficient*self.chance_node(board,depth),None
         
 
     def maximizer_node(self, board: np.ndarray, depth: int):
@@ -91,8 +92,6 @@ class Expectimax:
                 bestScore=(score1*2+score2[0]+newBoardScore)
         
         return bestMove,bestScore
-        
-        #raise NotImplementedError("Maximizer node not implemented yet.")
 
     def chance_node(self, board: np.ndarray, depth: int):
         """
@@ -111,10 +110,9 @@ class Expectimax:
         # Hint: You may need to use the np.copy function to create a copy of the board.
         
         score=0.0
-        
-        num=0
         board_copy=np.copy(board)
         size=np.shape(board)[0]
+        num=0.0
         for i in range(size):
             for j in range(size):
                 if not board[i,j]:
@@ -125,6 +123,5 @@ class Expectimax:
                     board_copy[i,j]=4.0
                     score+=(0.1*self.expectimax(board_copy,depth,1)[0])
                     board_copy[i,j]=0.0
-        
-        return score/size
+        return score/num
         

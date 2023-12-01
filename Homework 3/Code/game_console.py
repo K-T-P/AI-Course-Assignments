@@ -59,7 +59,7 @@ def ai_plot(agent_name='expectimax'):
 
 # 1. playing game once
 board = gf.initialize_game()
-# ai_play(board, agent_name='mcts')
+#ai_play(board, agent_name='mcts')
 
 # 2. plotting
 tik = time.time()

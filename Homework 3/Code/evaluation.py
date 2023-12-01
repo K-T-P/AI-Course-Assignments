@@ -37,8 +37,8 @@ def consistency(board:np.ndarray):
     
     scores = [0.0 for i in range(4)]
     for k in range(4):
-        for i in range(4):
-            for j in range(4):
+        for i in range(3):
+            for j in range(3):
                 if board[i,j]>board[i,j+1]:
                     scores[k]+=board[i,j]
                 if board[i,j]>board[i+1,j]:
@@ -56,5 +56,6 @@ def evaluate_state(board: np.ndarray) -> float:
     # Hint: You may need to use the np.nonzero function to find the indices of non-zero elements.
     # Hint: You may need to use the gf.within_bounds function to check if a position is within the bounds of the board.
 
-    # return consistence(board)+neighborhood(board)
-    return 0*consistency+ neighborhoob(board)
+    if 2048 in board:
+        return np.inf
+    return neighborhoob(board) # 0 * consistency(board) 
