@@ -16,14 +16,14 @@ def neighborhoob(board : np.ndarray):
     for i in range(3):
         for j in range(3):
             if board[i,j]==board[i,j+1]:
-                score+=(2*board[i,j])
+                score+=(board[i,j])
             if board[i,j]==board[i+1,j]:
-                score+=(2*board[i,j])
+                score+=(board[i,j])
     for i in range(3):
         if board[3,i]==board[3,i+1]:
-            score+=(2*board[3,i])
+            score+=(board[3,i])
         if board[i,3]==board[i+1,3]:
-            score+=(2*board[i,3])
+            score+=(board[i,3])
     return score
 
 def higherNumbers(board:np.ndarray):
