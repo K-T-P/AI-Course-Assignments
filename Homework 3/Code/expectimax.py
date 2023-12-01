@@ -7,7 +7,7 @@ import game_functions as gf
 class Expectimax:
     def __init__(self, board):
         self.DEPTH_BASE_PARAM = 1 # You may change this parameter to scale the depth to which the agent searches.
-        self.SCALER_PARAM = 400 # You may change this parameter to scale depth to which the agent searches.
+        self.SCALER_PARAM = 4 # You may change this parameter to scale depth to which the agent searches.
         self.board = board
 
     def get_depth(self, move_number):
@@ -80,12 +80,14 @@ class Expectimax:
         bestScore= -1*np.inf
         bestMove=None
         
-        for func in gf.get_all_possible_moves(board):
-            newBoard,temp,score1=gf.get_moves()[func[1]](np.copy(board))
+        for func in gf.get_moves():
+            newBoard,moveMade,score1=func(np.copy(board))
+            if not moveMade:
+                continue
             newBoardScore=evaluation.evaluate_state(newBoard)
             score2=self.expectimax(newBoard,depth,0)
             if score1+score2[0]>bestScore:
-                bestMove=gf.get_moves()[func[1]]
+                bestMove=func
                 bestScore=(score1+score2[0]+newBoardScore)
         
         return bestMove,bestScore
