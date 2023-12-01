@@ -86,9 +86,9 @@ class Expectimax:
                 continue
             newBoardScore=evaluation.evaluate_state(newBoard)
             score2=self.expectimax(newBoard,depth,0)
-            if score1+score2[0]>bestScore:
+            if score1*2+score2[0]>bestScore:
                 bestMove=func
-                bestScore=(score1+score2[0]+newBoardScore)
+                bestScore=(score1*2+score2[0]+newBoardScore)
         
         return bestMove,bestScore
         
