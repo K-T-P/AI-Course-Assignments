@@ -7,7 +7,7 @@ import game_functions as gf
 class Expectimax:
     def __init__(self, board):
         self.DEPTH_BASE_PARAM = 1 # You may change this parameter to scale the depth to which the agent searches.
-        self.SCALER_PARAM = 4 # You may change this parameter to scale depth to which the agent searches.
+        self.SCALER_PARAM = 400 # You may change this parameter to scale depth to which the agent searches.
         self.board = board
 
     def get_depth(self, move_number):
@@ -20,7 +20,7 @@ class Expectimax:
         """
         # TODO: Complete get_depth function to return the depth to which the agent should search for the given move number.
         # Hint: You may need to use the DEPTH_BASE_PARAM constant.
-        return self.DEPTH_BASE_PARAM
+        return self.DEPTH_BASE_PARAM+move_number//self.SCALER_PARAM
 
     def ai_move(self, board, move_number):
         depth = self.get_depth(move_number)
@@ -49,14 +49,13 @@ class Expectimax:
         # Hint: You may need to use the gf.terminal_state function to check if the game is over.
         if gf.terminal_state(board):
             return evaluation.evaluate_state(board),None
-        if depth==self.SCALER_PARAM:
+        if depth==0:
             return evaluation.evaluate_state(board),None
-        depth+=1
         if turn:
-            bestMove,bestScore=self.maximizer_node(board,depth)
+            bestMove,bestScore=self.maximizer_node(board,depth-1)
             return bestScore,bestMove
         else:
-            coefficient=(16-np.count_nonzero(board))/4
+            coefficient=(16-np.count_nonzero(board)+0.0)/4.0
             return coefficient*self.chance_node(board,depth),None
         
 

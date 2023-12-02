@@ -29,9 +29,13 @@ class MCTS:
         # Hint: You may want to use the self.UCB_SPM_SCALE_PARAM, self.UCB_SL_SCALE_PARAM, and self.UCB_SCALER_PARAM parameters.
         # Hint: You may want to use the self.mode parameter to check which mode the agent is on.
         if self.mode=='ucb':
-            return move_number,self.SCALER_PARAM-(move_number+self.SD_SCALE_PARAM)
+            search_depth=self.SD_SCALE_PARAM+ move_number//self.SCALER_PARAM
+            total_move=self.TM_SCALE_PARAM+move_number//self.SCALER_PARAM
+            return search_depth,total_move
         else:
-            return move_number,self.UCB_SCALER_PARAM-(move_number+self.UCB_SD_SCALE_PARAM)
+            search_depth=self.UCB_SD_SCALE_PARAM+move_number//self.UCB_SCALER_PARAM
+            total_move=self.UCB_TM_SCALE_PARAM+move_number//self.UCB_SCALER_PARAM
+            return search_depth,total_move
 
     def ai_move(self, board, move_number):
         search_depth, total_moves = self.get_search_params(move_number)
@@ -54,12 +58,16 @@ class MCTS:
         # Hint: You may want to use the evaluation.evaluate_state function to score a board.
         # Hint: You may want to use the move_made returned from the gf.random_move function to check if a move was made.
         # Hint: You may want to use the gf.add_new_tile function to add a new tile to the board.
-        if gf.terminal_state:
+       # if 
+        if gf.terminal_state or search_depth==0:
             return evaluation.evaluate_state(board)
+        
         newBoard,flag,score1 = gf.random_move(np.copy(board))
-        gf.add_new_tile(newBoard)
-        score2=evaluation.evaluate_state(newBoard)
-        return score1+score2+MCTS.simulate_move(newBoard,search_depth+1)
+        score2=0.0
+        if not flag:
+            gf.add_new_tile(newBoard)
+            score2=evaluation.evaluate_state(newBoard)
+        return score1+score2+MCTS.simulate_move(newBoard,search_depth-1)
         
 
     def ucb(self, moves: list, total_visits: int) -> np.ndarray:
@@ -126,8 +134,8 @@ class MCTS:
                 index+=1
                 continue
             moves_scores[index]+=score
-            for i in range(total_moves):
-                moves_scores[index]+=self.simulate_move(newBoard,search_depth)
+            for i in range(self.TM_SCALE_PARAM):
+                moves_scores[index]+=self.simulate_move(newBoard,search_depth-1)
             index+=1
         return gf.get_moves()[np.array(moves_scores).argmax()]
 
@@ -154,7 +162,7 @@ class MCTS:
                [gf.get_moves()[1],0.0,0.0],
                [gf.get_moves()[2],0.0,0.0],
                [gf.get_moves()[3],0.0,0.0] ]
-        for i in range(total_moves):
+        for i in range(self.TM_SCALE_PARAM):
             scores=self.ucb(moves,total_moves)
             selected_move_index=np.array(scores).argmax()
             if moves[0][1]==np.inf:
@@ -174,7 +182,7 @@ class MCTS:
             if not flag:
                 moves[selected_move_index][1]=-1*np.inf
             else:
-                moves[selected_move_index][1]+=MCTS.simulate_move(newBoard,search_depth+1)
+                moves[selected_move_index][1]+=MCTS.simulate_move(newBoard,search_depth-1)
             
         for i in range(4):
             temp1,moveMade,temp2=gf.move(np.copy(board),i)

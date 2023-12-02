@@ -63,7 +63,7 @@ board = gf.initialize_game()
 
 # 2. plotting
 tik = time.time()
-ai_plot(agent_name='expectimax')
+ai_plot(agent_name='mcts')
 tok = time.time()
 print(tok - tik)
 print((tok - tik) / SAMPLE_COUNT)
